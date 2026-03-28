@@ -22,6 +22,7 @@ export const TransactionTable = pgTable("transaction", {
   amount: integer().notNull(),
   date: varchar().notNull(),
   description: varchar().notNull(),
+  category: varchar().notNull(),
 });
 export type Transaction = typeof TransactionTable.$inferSelect;
 export type NewTransaction = typeof TransactionTable.$inferInsert;
