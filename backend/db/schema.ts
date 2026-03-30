@@ -4,7 +4,7 @@ import { email } from "zod";
 
 // Account Table
 export const AccountTable = pgTable("account", {
-  acc_no: integer().generatedAlwaysAsIdentity().primaryKey(),
+  acc_no: integer().primaryKey().notNull(),
   email: varchar().notNull(),
   name: varchar().notNull(),
   institution: varchar().notNull(),

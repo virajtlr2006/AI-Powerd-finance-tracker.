@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 const router: Router = express.Router()
 
 // 📌 Route to fetch accounts based on email
-router.get("/", async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
     // 📧 Define email validation schema
     const emailSchema = z.object({
         email: z.string(),
@@ -51,11 +51,11 @@ router.post("/new", async (req: Request, res: Response) => {
     }
 
     // 🔓 Extract account data from validated schema
-    const { email, name, institution, type, balance, icon } = parseAccount.data
+    const {acc_no, email, name, institution, type, balance, icon } = parseAccount.data
 
 
     // 📋 Create new account in database
-    const newAccount = await db.insert(AccountTable).values({ email, name, institution, type, balance, icon }).returning()
+    const newAccount = await db.insert(AccountTable).values({acc_no, email, name, institution, type, balance, icon }).returning()
 
     // ✅ Return created account with success status
     res.status(200).json(
