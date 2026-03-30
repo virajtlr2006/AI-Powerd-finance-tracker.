@@ -40,8 +40,6 @@ router.get("/", async (req: Request, res: Response) => {
 router.post("/new", async (req: Request, res: Response) => {
     // 📧 Define account creation validation schema
 
-   
-
     // Type inference for your TypeScript logic
 
     // ✔️ Parse and validate account data from request body
@@ -65,19 +63,19 @@ router.post("/new", async (req: Request, res: Response) => {
     )
 })
 
-// GET /api/accounts/:acc_no - Get account details
-router.get("/:acc_no", async (req: Request, res: Response) => {
+// GET /api/accounts/detail - Get account details
+router.get("/detail", async (req: Request, res: Response) => {
     // 📧 Define account ID validation schema
     const accountIdSchema = z.object({
         acc_no: z
-            .string()
+            .number()
             .transform(val => Number(val))
             .refine(val => !isNaN(val) && val > 0, "Invalid account ID")
             .describe("The unique numerical account identifier"),
     })
 
     // ✔️ Parse and validate account ID from request params
-    const parseId = accountIdSchema.safeParse({ acc_no: req.params.acc_no })
+    const parseId = accountIdSchema.safeParse(req.body)
     if (!parseId.success) {
         // ❌ Return error if validation fails
         res.status(400).json({ error: "Invalid account ID" })
@@ -99,7 +97,7 @@ router.get("/:acc_no", async (req: Request, res: Response) => {
     res.status(200).json({ "account": account })
 })  
 
-// [ ] PUT /api/accounts/:id - Update account
+// [ ] PUT /api/accounts/ - Update account
 router.put("/", async (req: Request, res: Response) => {
     // 📧 Define account ID validation schema
    
@@ -122,9 +120,6 @@ router.put("/", async (req: Request, res: Response) => {
         return
     }
     
-    // 📧 Define update account validation schema
-    
-    
     // ✔️ Parse and validate updated data from request body
 
     // 📋 Update account in database
@@ -138,18 +133,18 @@ router.put("/", async (req: Request, res: Response) => {
 })
 
 //[ ] DELETE /api/accounts/:acc_no - Soft delete account
-router.delete("/:acc_no", async (req: Request, res: Response) => {
+router.delete("/delete", async (req: Request, res: Response) => {
     // 📧 Define account ID validation schema
     const accountIdSchema = z.object({
         acc_no: z
-            .string()
+            .number()
             .transform(val => Number(val))
             .refine(val => !isNaN(val) && val > 0, "Invalid account ID")
             .describe("The unique numerical account identifier"),
     })
 
     // ✔️ Parse and validate account ID from request params
-    const parseId = accountIdSchema.safeParse({ acc_no: req.params.acc_no })
+    const parseId = accountIdSchema.safeParse(req.body)
     if (!parseId.success) {
         // ❌ Return error if validation fails
         res.status(400).json({ error: "Invalid account ID" })

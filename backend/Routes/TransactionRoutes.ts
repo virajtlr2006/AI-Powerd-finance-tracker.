@@ -7,8 +7,6 @@ import { z } from "zod";
 
 const router: Router = express.Router()
 
-
-
 // 📋 List Transactions
 router.get("/", async (req: Request, res: Response) => {
   const transactionQuerySchema = z.object({
@@ -16,9 +14,9 @@ router.get("/", async (req: Request, res: Response) => {
   });
 
   try {
-    // ✔️ Validate request body against schema
+    // ✔️ Validate request query against schema
     const validation = transactionQuerySchema.safeParse(req.body);
-
+  
     if (!validation.success) {
       // ❌ Return validation error if schema check fails
       res.status(400).json({ error: validation.error.message });
@@ -82,14 +80,14 @@ router.post("/new", async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/transactions/:id - Get transaction details
-router.get("/:id", async (req: Request, res: Response) => {
+// GET /api/transactions/:trans_id - Get transaction details
+router.get("/:trans_id", async (req: Request, res: Response) => {
   const transactionIdSchema = z.object({
-    id: z.number().describe("Transaction ID is required")
+    trans_id: z.number().describe("Transaction ID is required")
   });
   try {
     // ✔️ Validate request params against schema
-    const validation = transactionIdSchema.safeParse({ id: Number(req.params.id) });
+    const validation = transactionIdSchema.safeParse({ trans_id: Number(req.params.trans_id) });
 
     if (!validation.success) {
       // ❌ Return validation error if schema check fails
@@ -97,9 +95,9 @@ router.get("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    const { id } = validation.data;
+    const { trans_id } = validation.data;
     // 💾 Query database for transaction by ID
-    const transaction = await db.select().from(TransactionTable).where(eq(TransactionTable.id, id));
+    const transaction = await db.select().from(TransactionTable).where(eq(TransactionTable.trans_id, trans_id));
 
     if (transaction.length === 0) {
       // ❌ Return not found error if transaction doesn't exist
@@ -119,14 +117,14 @@ router.get("/:id", async (req: Request, res: Response) => {
   }
 });
 
-// DELETE /api/transactions/:id - Delete a transaction
-router.delete("/:id", async (req: Request, res: Response) => {
+// DELETE /api/transactions/:trans_id - Delete a transaction
+router.delete("/:trans_id", async (req: Request, res: Response) => {
   const transactionIdSchema = z.object({
-    id: z.number().describe("Transaction ID is required")
+    trans_id: z.number().describe("Transaction ID is required")
   }); 
   try {
     // ✔️ Validate request params against schema
-    const validation = transactionIdSchema.safeParse({ id: Number(req.params.id) });
+    const validation = transactionIdSchema.safeParse({ trans_id: Number(req.params.trans_id) });
 
     if (!validation.success) {
       // ❌ Return validation error if schema check fails
@@ -134,9 +132,9 @@ router.delete("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    const { id } = validation.data;
+    const { trans_id } = validation.data;
     // 💾 Delete transaction from database by ID
-    const deleteResult = await db.delete(TransactionTable).where(eq(TransactionTable.id, id)).returning();
+    const deleteResult = await db.delete(TransactionTable).where(eq(TransactionTable.trans_id, trans_id)).returning();
 
     if (deleteResult.length === 0) {
       // ❌ Return not found error if transaction doesn't exist
@@ -156,10 +154,10 @@ router.delete("/:id", async (req: Request, res: Response) => {
   }
 });
 
-// PUT /api/transactions/:id - Update a transaction
-router.put("/:id", async (req: Request, res: Response) => {
+// PUT /api/transactions/:trans_id - Update a transaction
+router.put("/:trans_id", async (req: Request, res: Response) => {
   const transactionIdSchema = z.object({
-    id: z.number().describe("Transaction ID is required")
+    trans_id: z.number().describe("Transaction ID is required")
   });
   const transactionUpdateSchema = z.object({
     description: z.string().optional(),
@@ -167,7 +165,7 @@ router.put("/:id", async (req: Request, res: Response) => {
   });
   try {
     // ✔️ Validate request params against schema
-    const idValidation = transactionIdSchema.safeParse({ id: Number(req.params.id) });
+    const idValidation = transactionIdSchema.safeParse({ trans_id: Number(req.params.trans_id) });
 
     if (!idValidation.success) {
       // ❌ Return validation error if schema check fails
@@ -184,11 +182,11 @@ router.put("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    const { id } = idValidation.data;
+    const { trans_id } = idValidation.data;
     const updateData = updateValidation.data;
 
     // 💾 Update transaction in database by ID
-    const updatedTransaction = await db.update(TransactionTable).set(updateData).where(eq(TransactionTable.id, id)).returning();
+    const updatedTransaction = await db.update(TransactionTable).set(updateData).where(eq(TransactionTable.trans_id, trans_id)).returning();
 
     if (updatedTransaction.length === 0) {
       // ❌ Return not found error if transaction doesn't exist
