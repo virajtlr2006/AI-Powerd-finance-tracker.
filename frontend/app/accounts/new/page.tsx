@@ -4,6 +4,7 @@ import type { NewAccount } from "../../../../backend/db/schema"
 import axios from "axios"
 import { useCurrentUser } from "@/hooks/useHook"
 import { useRouter } from "next/navigation"
+import { generateAccno } from "@/lib/GenerateAccNo"
 
 const page = () => {
 
@@ -31,18 +32,24 @@ const page = () => {
         }
 
         // 📦 Merge form data with authenticated user email
+        const acc_no =  generateAccno();
         const newData = {
             ...data,
+            acc_no,
             email: email
         }
-        // console.log(newData);
+        console.log(newData);
 
         // 🌐 Send create-account request to backend
-        const response = await axios.post("http://localhost:8080/api/accounts/new", newData)
-        console.log(response.data.account);
+        try {
+            const response = await axios.post("http://localhost:8080/api/accounts/new", newData)
+            console.log(response.data.account);
 
-        // ✅ Navigate to all accounts page after success
-        router.push("/accounts/all")
+            // ✅ Navigate to all accounts page after success
+            router.push("/accounts/all")
+        } catch (error) {
+            console.error("Error creating account:", error)
+        }
     }
 
     return (
