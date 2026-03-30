@@ -4,7 +4,7 @@ import { email } from "zod";
 
 // Account Table
 export const AccountTable = pgTable("account", {
-  acc_no: integer().generatedAlwaysAsIdentity(),
+  acc_no: integer().generatedAlwaysAsIdentity().primaryKey(),
   email: varchar().notNull(),
   name: varchar().notNull(),
   institution: varchar().notNull(),
@@ -20,7 +20,7 @@ export const NewAccountSchema = createInsertSchema(AccountTable)
 
 // Transaction Table
 export const TransactionTable = pgTable("transaction", {
- trans_id: integer().generatedAlwaysAsIdentity(),
+ trans_id: integer().primaryKey().generatedAlwaysAsIdentity(),
   acc_no: integer().notNull(),
   amount: integer().notNull(),
   date: varchar().notNull(),

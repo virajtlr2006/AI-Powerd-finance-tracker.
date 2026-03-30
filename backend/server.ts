@@ -3,6 +3,7 @@ import type { Application, Request, Response } from 'express';
 import { z } from 'zod';
 import AccountRouter from './Routes/AccountRoutes.ts';
 import TransactionRouter from './Routes/TransactionRoutes.ts';  
+import cors from 'cors';
 
 
 const app: Application = express();
@@ -10,7 +11,7 @@ const port = process.env.PORT || 8080;
 
 // Middleware
 app.use(express.json());
-
+app.use(cors());
 // Basic Route
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');
