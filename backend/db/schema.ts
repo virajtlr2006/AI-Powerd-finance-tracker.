@@ -1,11 +1,11 @@
 import { bigint, integer, pgTable, varchar } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { email } from "zod";
 
 // Account Table
 export const AccountTable = pgTable("account", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  acc_no: integer().generatedAlwaysAsIdentity(),
   email: varchar().notNull(),
-  acc_no: integer().notNull(),
   name: varchar().notNull(),
   institution: varchar().notNull(),
   type: varchar().default("savings"),
@@ -14,10 +14,13 @@ export const AccountTable = pgTable("account", {
 });
 export type Account = typeof AccountTable.$inferSelect;
 export type NewAccount = typeof AccountTable.$inferInsert;
+export const AccountSchema = createSelectSchema(AccountTable)
+export const NewAccountSchema = createInsertSchema(AccountTable)
+
 
 // Transaction Table
 export const TransactionTable = pgTable("transaction", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+ trans_id: integer().generatedAlwaysAsIdentity(),
   acc_no: integer().notNull(),
   amount: integer().notNull(),
   date: varchar().notNull(),
@@ -26,3 +29,6 @@ export const TransactionTable = pgTable("transaction", {
 });
 export type Transaction = typeof TransactionTable.$inferSelect;
 export type NewTransaction = typeof TransactionTable.$inferInsert;
+
+export const TransactionSchema = createSelectSchema(TransactionTable)
+export const NewTransactionSchema = createInsertSchema(TransactionTable)

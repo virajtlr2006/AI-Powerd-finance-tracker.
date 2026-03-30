@@ -40,5 +40,5 @@ app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
 
-app.use('/api', AccountRouter);
+app.use('/api/accounts', AccountRouter);
 app.use('/api/transactions', TransactionRouter);
