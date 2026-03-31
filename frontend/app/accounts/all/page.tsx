@@ -50,7 +50,10 @@ const page = () => {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">All Accounts</h1>
-      {allAccounts && allAccounts.length > 0 ? (
+      {allAccounts === null ? (
+        // ⏳ Show loading message while fetching
+        <p className="text-center text-gray-600 border border-gray-300 rounded-lg p-4 bg-white">Loading accounts...</p>
+      ) : allAccounts.length > 0 ? (
         <ul className="space-y-4">
           {allAccounts.map((account) => (
             <li 

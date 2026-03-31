@@ -52,9 +52,7 @@ const page = () => {
       {account ? (
         <div className="bg-white rounded-xl shadow-lg p-8 max-w-2xl mx-auto border border-gray-200">
           <div className="flex items-center space-x-4 mb-6">
-            <div className="h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center text-3xl">
-              {account.icon || '🏦'}
-            </div>
+            <img className="h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center text-3xl" src={account.icon || "/default-icon.png"} />
             <div>
               <h2 className="text-2xl font-bold text-gray-900">{account.name}</h2>
               <p className="text-gray-500 font-medium">{account.institution}</p>
