@@ -39,13 +39,6 @@ const page = () => {
     setallAccounts(response.data.allAccounts)
   }
 
-  // 🖱️ Handle account click without URL params
-  const handleAccountClick = (acc_no: number) => {
-    // 🗄️ Save selected account number in local storage
-    localStorage.setItem('selected_acc_no', acc_no.toString())
-    // 🚀 Navigate to single account page
-    router.push('/accounts/single')
-  }
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -56,11 +49,7 @@ const page = () => {
       ) : allAccounts.length > 0 ? (
         <ul className="space-y-4">
           {allAccounts.map((account) => (
-            <li 
-              key={account.acc_no} 
-              onClick={() => handleAccountClick(account.acc_no)}
-              className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-            >
+            <a key={account.acc_no} href={`/accounts/${account.acc_no}`} className="block">
               {/* 🏦 Display account name */}
               <h3 className="text-xl font-semibold text-gray-800 mb-2">{account.name}</h3>
               {/* 🏢 Display institution */}
@@ -69,7 +58,7 @@ const page = () => {
               <p className="text-gray-600">Type: {account.type}</p>
               {/* 💰 Display account balance */}
               <p className="text-gray-800 font-semibold mt-2">Balance: ${account.balance}</p>
-            </li>
+            </a>
           ))}
         </ul>
       ) : (

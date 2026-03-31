@@ -3,39 +3,42 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Account } from '../../../../backend/db/schema'
+import { useParams } from 'next/navigation'
+import { useCurrentUser } from '@/hooks/useHook'
 
 const page = () => {
 
   const [account, setAccount] = useState<Account | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  const {acc_no} = useParams()
+  const {email,isLoaded} = useCurrentUser()
+
   useEffect(() => {
-    // 🗄️ Retrieve account number from local storage (not params or user input)
-    const accNo = localStorage.getItem('selected_acc_no')
-    
-    if (accNo) {
-      GetSingleAccount(Number(accNo))
+    if(!isLoaded || !email) {
+      return
+    }
+    if (acc_no) {
+      GetSingleAccount(Number(acc_no))
     } else {
       setError('No account selected. Please select an account from the All Accounts page.')
     }
-  }, [])
+  }, [isLoaded,email])
 
   // 📡 Async function to fetch single account details from backend
   const GetSingleAccount = async (acc_no: number) => {
     try {
       // 🌐 Make API call for account details (Changed to POST because GET requests generally drop req.body)
-      const response = await axios.post("http://localhost:8080/api/accounts/detail", {
-        acc_no 
-      })
+      const response = await axios.post(`http://localhost:8080/api/accounts/${acc_no}`, { email })
+      console.log(response);
       
       if (response.data && response.data.account && response.data.account.length > 0) {
         setAccount(response.data.account[0])
       } else {
         setError('Account details not found.')
       }
-    } catch (err) {
-      console.error(err)
-      setError('Failed to fetch account details.')
+    } catch (err:any) {
+      setError(err.response.data.error);
     }
   }
 

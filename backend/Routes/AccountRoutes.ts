@@ -64,28 +64,23 @@ router.post("/new", async (req: Request, res: Response) => {
 })
 
 // POST /api/accounts/detail - Get account details (Changed to POST to properly receive req.body)
-router.post("/detail", async (req: Request, res: Response) => {
+router.post("/:acc_no", async (req: Request, res: Response) => {
     // 📧 Define account ID validation schema
-    const accountIdSchema = z.object({
-        acc_no: z
-            .number()
-            .transform(val => Number(val))
-            .refine(val => !isNaN(val) && val > 0, "Invalid account ID")
-            .describe("The unique numerical account identifier"),
-    })
+    const {acc_no} = req.params
+    const {email} = req.body
 
-    // ✔️ Parse and validate account ID from request params
-    const parseId = accountIdSchema.safeParse(req.body)
-    if (!parseId.success) {
-        // ❌ Return error if validation fails
-        res.status(400).json({ error: "Invalid account ID" })
+    if(!email) {
+        res.status(400).json({ error: "Email is required" })
         return
-    }
-
-    const { acc_no } = parseId.data
+    }   
 
     // 📋 Fetch account by ID from database
-    const account = await db.select().from(AccountTable).where(eq(AccountTable.acc_no, acc_no));
+    const account = await db.select().from(AccountTable).where(eq(AccountTable.acc_no, Number(acc_no)));
+    console.log(account[0]?.email);
+
+    if(account[0]?.email !== email) {
+        res.status(403).json({ error: "Unauthorized access to account details" })
+    }
 
     if(!account || account.length === 0) {
         // ❌ Return error if account not found
