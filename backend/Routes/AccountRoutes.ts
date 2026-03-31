@@ -63,8 +63,8 @@ router.post("/new", async (req: Request, res: Response) => {
     )
 })
 
-// GET /api/accounts/detail - Get account details
-router.get("/detail", async (req: Request, res: Response) => {
+// POST /api/accounts/detail - Get account details (Changed to POST to properly receive req.body)
+router.post("/detail", async (req: Request, res: Response) => {
     // 📧 Define account ID validation schema
     const accountIdSchema = z.object({
         acc_no: z

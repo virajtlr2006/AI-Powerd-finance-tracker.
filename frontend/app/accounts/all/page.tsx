@@ -4,11 +4,15 @@ import React, { useEffect, useState } from 'react'
 import { Account } from '../../../../backend/db/schema'
 import axios from 'axios'
 import { useCurrentUser } from '@/hooks/useHook'
+import { useRouter } from 'next/navigation'
 
 const page = () => {
 
   // 💾 State to store all accounts
   const [allAccounts, setallAccounts] = useState<Account[] | null>(null)
+  
+  // 🧭 Next.js router for navigation
+  const router = useRouter()
 
   // 👤 Get current user's email and loading state
   const {isLoaded,email} = useCurrentUser()
@@ -34,13 +38,26 @@ const page = () => {
     // ✅ Update state with fetched accounts
     setallAccounts(response.data.allAccounts)
   }
+
+  // 🖱️ Handle account click without URL params
+  const handleAccountClick = (acc_no: number) => {
+    // 🗄️ Save selected account number in local storage
+    localStorage.setItem('selected_acc_no', acc_no.toString())
+    // 🚀 Navigate to single account page
+    router.push('/accounts/single')
+  }
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">All Accounts</h1>
       {allAccounts && allAccounts.length > 0 ? (
         <ul className="space-y-4">
           {allAccounts.map((account) => (
-            <li key={account.acc_no} className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
+            <li 
+              key={account.acc_no} 
+              onClick={() => handleAccountClick(account.acc_no)}
+              className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            >
               {/* 🏦 Display account name */}
               <h3 className="text-xl font-semibold text-gray-800 mb-2">{account.name}</h3>
               {/* 🏢 Display institution */}
