@@ -40,27 +40,35 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 // 📋 Create Transaction
-router.post("/new", async (req: Request, res: Response) => {
+router.post("/new/:acc_no", async (req: Request, res: Response) => {
   const transactionSchema = z.object({
-    acc_no: z.number(),
     amount: z.number(),
     date: z.string(),
     description: z.string(),
     category: z.string(),
   });
+  const accountNumberSchema = z.object({
+    acc_no: z.string().describe("Account number is required")
+  });
   try {
     // ✔️ Validate request body against schema
     const validation = transactionSchema.safeParse(req.body);
+    const accCalidation = accountNumberSchema.safeParse(req.params);
 
     if (!validation.success) {
       // ❌ Return validation error if schema check fails
       res.status(400).json({ error: validation.error.message });
       return;
     }
+    if(!accCalidation.success) {
+      res.status(400).json({ error: accCalidation.error.message });
+      return;
+    }
 
     // 🔍 Extract validated transaction data
-    const { acc_no, amount, date, description, category } = validation.data;
+    const { amount, date, description, category } = validation.data;
     // 💾 Insert new transaction into database
+    const {acc_no} = accCalidation.data;
     const newTransaction = await db.insert(TransactionTable).values({
       acc_no: Number(acc_no),
       amount,
